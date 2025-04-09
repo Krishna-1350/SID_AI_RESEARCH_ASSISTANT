@@ -4,7 +4,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.embeddings.base import Embeddings
 from langchain_core.documents import Document
-from helper import HuggingFaceLLM
+from .helper import HuggingFaceLLM
 
 class RAGPipeline:
     def __init__(
@@ -56,29 +56,29 @@ def create_dummy_vectorstore():
     
     print("FAISS index created.")
     return vectorstore
-    
-print("inside main")
-vectorstore = create_dummy_vectorstore()
-print("vector store created")
+# if __name__ == "__main__":    
+#     print("inside main")
+#     vectorstore = create_dummy_vectorstore()
+#     print("vector store created")
 
-llm = HuggingFaceLLM(model_id="google/gemma-2b")
-print("llm initialised")
+#     llm = HuggingFaceLLM(model_id="google/gemma-2b")
+#     print("llm initialised")
 
-prompt_template = """You are a helpful medical assistant.
-Use the following context to answer the question.
-{context}
+#     prompt_template = """You are a helpful medical assistant.
+#     Use the following context to answer the question.
+#     {context}
 
-Question: {query}
-Answer:"""
-print(prompt_template)
+#     Question: {query}
+#     Answer:"""
+#     print(prompt_template)
 
-rag = RAGPipeline(
-    vectorstore=vectorstore,
-    embedding_model=None, 
-         llm_model=llm,
-         prompt_template_str=prompt_template
-)
+#     rag = RAGPipeline(
+#         vectorstore=vectorstore,
+#         embedding_model=None, 
+#             llm_model=llm,
+#             prompt_template_str=prompt_template
+#     )
 
-query = "What helps with insulin resistance?"
-response = rag.generate_rag_response(query)
-print("\n>>> RAG Response:\n", response)
+#     query = "What helps with insulin resistance?"
+#     response = rag.generate_rag_response(query)
+#     print("\n>>> RAG Response:\n", response)
