@@ -1,5 +1,7 @@
 from django.urls import path
 
+from app.youtubetranscript.views import FetchTranscriptView
+
 urlpatterns = [
-    # path('', ViewName.as_view(), name='demo-api'), # Example URL Remove later
+    path('fetch-transcript/', FetchTranscriptView.as_view(), name='fetch-youtube-transcript'),
 ]

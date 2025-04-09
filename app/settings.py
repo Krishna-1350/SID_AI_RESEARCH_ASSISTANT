@@ -11,9 +11,21 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Environment setup
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, True)
+)
+
+# Read environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -134,9 +146,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Django Rest Framework Config
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
+    # ),
     'NON_FIELD_ERRORS_KEY': 'detail',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
@@ -166,3 +179,5 @@ LOGGING = {
         },
     },
 }
+
+YOUTUBE_API_KEY = env('YOUTUBE_API_KEY')
