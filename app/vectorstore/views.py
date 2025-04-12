@@ -8,9 +8,6 @@ import requests
 from sentence_transformers import SentenceTransformer
 from app.vectorstore.helper import chunk_transcript, embed_and_store_in_faiss, search_faiss
 
-# ✅ Load embedding model once
-embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-
 # Global variables for reuse (optional)
 index = None
 metadata = []
