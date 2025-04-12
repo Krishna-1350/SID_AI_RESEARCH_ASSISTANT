@@ -26,7 +26,7 @@ class FetchTranscriptView(APIView):
             transcript = get_transcript_text(video_id)
             if transcript:
                 return_data.append({"index":indexer, "video_name":video_name, "transcript":transcript})
-            if len(return_data)==10: break
-            indexer += 1
+                if len(return_data)==10: break
+                indexer += 1
 
         return Response({"message": "Transcripts retrieved successfully.", "results": return_data}, status.HTTP_200_OK)

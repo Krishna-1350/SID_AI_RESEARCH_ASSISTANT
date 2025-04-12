@@ -1,5 +1,7 @@
 from django.urls import path
 
+from app.vectorstore.views import TranscriptRAGView
+
 urlpatterns = [
-    # path('', ViewName.as_view(), name='demo-api'), # Example URL Remove later
+    path('transcript-rag/', TranscriptRAGView.as_view(), name='transcript-rag'),
 ]

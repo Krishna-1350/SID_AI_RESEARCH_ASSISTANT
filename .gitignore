@@ -17,6 +17,7 @@ dist/
 .env
 media/
 /env/
+/air_env/
 
 # Log files
 *.log
