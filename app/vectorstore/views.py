@@ -11,19 +11,6 @@ from app.vectorstore.helper import chunk_transcript, embed_and_store_in_faiss, s
 # ✅ Load embedding model once
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# ✅ Dummy vector store — replace with real chunks and vectors
-# transcript_chunks = [
-#     {
-#         "text": "Transformers were introduced in 2017 by Vaswani et al.",
-#         "embedding": embedding_model.encode("Transformers were introduced in 2017 by Vaswani et al.").tolist()
-#     },
-#     {
-#         "text": "Self-attention is the key idea behind Transformers.",
-#         "embedding": embedding_model.encode("Self-attention is the key idea behind Transformers.").tolist()
-#     },
-#     # Add more as needed
-# ]
-
 # Global variables for reuse (optional)
 index = None
 metadata = []
