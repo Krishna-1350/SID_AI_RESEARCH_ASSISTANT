@@ -51,6 +51,15 @@ class UserLogout(GenericAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        request_body=
+        openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'refresh': openapi.Schema(type=openapi.TYPE_STRING, description='refresh token'),
+            },
+        )
+    )
     def post(self, request):
         try:
             refresh_token = request.data.get('refresh_token')
