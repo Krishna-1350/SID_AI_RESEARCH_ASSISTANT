@@ -1,5 +1,3 @@
-import nltk
-from nltk.tokenize import sent_tokenize
 from typing import List, Dict
 import faiss
 import numpy as np

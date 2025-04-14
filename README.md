@@ -35,6 +35,7 @@ env\Scripts\activate           # Windows
 ### 3. Install Dependencies
 ```bash
 pip install -r requirements.txt
+python -m spacy download en_core_web_sm
 ```
 
 Or manually if needed:
