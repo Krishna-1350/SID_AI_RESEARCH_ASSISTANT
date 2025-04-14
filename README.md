@@ -56,6 +56,11 @@ pip install drf-yasg
 Create a .env file in the project root with the following content:
 
 ```bash
+DATABASE_NAME='XXXXX'
+DATABASE_USER='XXXXX'
+DATABASE_PASS='XXXXX'
+DATABASE_HOST='XXXXX'
+DATABASE_PORT='XXXXX'
 YOUTUBE_API_KEY='XXXXX'
 ```
 
