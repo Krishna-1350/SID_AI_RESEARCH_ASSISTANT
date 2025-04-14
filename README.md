@@ -47,6 +47,9 @@ pip install django-cors-headers
 pip install django-environ
 pip install google-api-python-client
 pip install youtube-transcript-api
+pip install psycopg
+pip install djangorestframework-simplejwt
+pip install drf-yasg
 ```
 
 ### 📁 .env File
