@@ -4,6 +4,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.embeddings.base import Embeddings
 from langchain_core.documents import Document
+from app.vectorstore.helper import embed_and_store_in_faiss, chunk_transcript
 from .helper import HuggingFaceLLM
 
 class RAGPipeline:
@@ -55,30 +56,15 @@ def create_dummy_vectorstore():
     vectorstore = FAISS.from_documents(dummy_docs, embedding=embedding_model)
     
     print("FAISS index created.")
-    return vectorstore
-# if __name__ == "__main__":    
-#     print("inside main")
-#     vectorstore = create_dummy_vectorstore()
-#     print("vector store created")
+    return vectorstore    
+def create_vectorstore(transcript_data, chunk_size=500, overlap=100):
+    all_chunks = []
+    for item in transcript_data:
+        chunks = chunk_transcript(item["video_name"], item["transcript"], chunk_size, overlap)
+        all_chunks.extend(chunks)
 
-#     llm = HuggingFaceLLM(model_id="google/gemma-2b")
-#     print("llm initialised")
+    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    docs = [Document(page_content=chunk["chunk"], metadata={"videoId": chunk["video_name"]}) for chunk in all_chunks]
 
-#     prompt_template = """You are a helpful medical assistant.
-#     Use the following context to answer the question.
-#     {context}
-
-#     Question: {query}
-#     Answer:"""
-#     print(prompt_template)
-
-#     rag = RAGPipeline(
-#         vectorstore=vectorstore,
-#         embedding_model=None, 
-#             llm_model=llm,
-#             prompt_template_str=prompt_template
-#     )
-
-#     query = "What helps with insulin resistance?"
-#     response = rag.generate_rag_response(query)
-#     print("\n>>> RAG Response:\n", response)
+    vectorstore = FAISS.from_documents(docs, embedding=embeddings)
+    return vectorstore    
