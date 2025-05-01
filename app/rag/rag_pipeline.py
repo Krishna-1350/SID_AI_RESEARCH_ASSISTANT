@@ -10,37 +10,38 @@ from .helper import HuggingFaceLLM
 class RAGPipeline:
     def __init__(
         self,
-        vectorstore,
-        embedding_model: Embeddings,
+        # vectorstore,
+        # embedding_model: Embeddings,
         llm_model,
         prompt_template_str: str,
-        top_k: int = 3,
+        # top_k: int = 3,
     ):
         self.llm = llm_model
         self.prompt_template = ChatPromptTemplate.from_template(prompt_template_str)
-        self.vectorstore = vectorstore
-        self.retriever = self.vectorstore.as_retriever(
-            search_type="similarity", search_kwargs={"k": top_k}
-        )
+        # self.vectorstore = vectorstore
+        # self.retriever = self.vectorstore.as_retriever(
+        #     search_type="similarity", search_kwargs={"k": top_k}
+        # )
 
     def generate_rag_response(self, query: str):
-        retrieved_docs = self.retriever.invoke(query)
-        context_with_video_ids = ""
+        # retrieved_docs = self.retriever.invoke(query)
+        # context_with_video_ids = ""
 
-        for doc in retrieved_docs:
-            video_id = doc.metadata.get("videoId", "N/A")
-            content = doc.page_content
-            context_with_video_ids += f"Context: {content}\n"
-            if video_id != "N/A":
-                context_with_video_ids += f"Video ID: {video_id}\n\n"
-            else:
-                context_with_video_ids += "\n"
+        # for doc in retrieved_docs:
+        #     video_id = doc.metadata.get("videoId", "N/A")
+        #     content = doc.page_content
+        #     context_with_video_ids += f"Context: {content}\n"
+        #     if video_id != "N/A":
+        #         context_with_video_ids += f"Video ID: {video_id}\n\n"
+        #     else:
+        #         context_with_video_ids += "\n"
 
-        formatted_prompt = self.prompt_template.format(
-            context=context_with_video_ids,
-            query=query,
-        )
-        response = self.llm.invoke(formatted_prompt)
+        # formatted_prompt = self.prompt_template.format(
+        #     context=context_with_video_ids,
+        #     query=query,
+        # )
+        print(self.prompt_template)
+        response = self.llm.invoke(self.prompt_template)
         return response.content
 
 def create_dummy_vectorstore():
@@ -56,7 +57,8 @@ def create_dummy_vectorstore():
     vectorstore = FAISS.from_documents(dummy_docs, embedding=embedding_model)
     
     print("FAISS index created.")
-    return vectorstore    
+    return vectorstore 
+   
 def create_vectorstore(transcript_data, chunk_size=500, overlap=100):
     all_chunks = []
     for item in transcript_data:

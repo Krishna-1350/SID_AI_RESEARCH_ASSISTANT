@@ -2,40 +2,59 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import requests
 
-from .rag_pipeline import RAGPipeline, create_dummy_vectorstore
+from .rag_pipeline import RAGPipeline, create_dummy_vectorstore, create_vectorstore
 from .helper import HuggingFaceLLM
 
 def get_rag_pipeline(query):
     if not hasattr(get_rag_pipeline, "pipeline"):
         print("⏳ Initializing real RAG pipeline...")
-
         # Fetch real transcripts dynamically (replace with your own endpoint if needed)
-        response = requests.get("https:///api/youtubetranscript/fetch-transcript/",params={"query": query},
-    auth=("", ""))
+
+        response = requests.post("http://localhost:8009/api/vectorstore/transcript-rag/",data={"query": query}, auth=("", ""))
+        print(response.status_code)
         if response.status_code != 200:
-            raise ValueError("Unable to fetch transcripts.")
+            raise ValueError("Unable to fetch transcripts.") 
 
-        transcript_data = response.json().get("results", [])
+        context = response.json().get("context", '')
 
-        vectorstore = create_vectorstore(transcript_data)
+        # vectorstore = create_vectorstore(transcript_data)
 
-        llm = HuggingFaceLLM(model_id="google/gemma-2b")
+        # llm = HuggingFaceLLM(model_id="google/gemma-2b")
+
         prompt_template = """You are a helpful assistant.
-Use context below to answer questions:
+                            Use context below to answer questions:
 
-{context}
+                            {context}
 
-Question: {query}
-Answer:"""
+                            Question: {query}
+                            Answer:"""
+        
+        final_prompt = prompt_template.format(context=context, query=query)
 
-        get_rag_pipeline.pipeline = RAGPipeline(
-            vectorstore=vectorstore,
-            embedding_model=None,  # Embedding handled inside FAISS setup
-            llm_model=llm,
-            prompt_template_str=prompt_template
+        # Step 3: Call Ollama's LLaMA2
+        ollama_response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "llama3.2", 
+                "prompt": final_prompt,
+                "stream": False
+            }
         )
-        print("Real RAG pipeline ready.")
+        print(ollama_response.status_code)
+        if ollama_response.status_code != 200:
+            raise ValueError("Ollama LLM request failed.")
+
+        answer = ollama_response.json().get("response", "").strip()
+
+        # Step 4: Store it in a callable format for reuse
+        def run_rag_pipeline(_query):
+            return answer  # You can modify this to regenerate if needed
+
+        get_rag_pipeline.pipeline = run_rag_pipeline
+        print("RAG pipeline with Ollama ready.")
+    
     return get_rag_pipeline.pipeline
 
 @csrf_exempt
@@ -47,8 +66,8 @@ def rag_query(request):
             if not query:
                 return JsonResponse({"error": "No query provided"}, status=400)
 
-            rag_pipeline = get_rag_pipeline(query)  # 👈 Pass query here
-            response = rag_pipeline.generate_rag_response(query)
+            rag_pipeline = get_rag_pipeline(query) 
+            response = rag_pipeline(query)          
             return JsonResponse({"response": response}, status=200)
 
         except Exception as e:

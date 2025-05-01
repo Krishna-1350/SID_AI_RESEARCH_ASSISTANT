@@ -13,9 +13,9 @@ class FetchTranscriptView(APIView):
         query = request.query_params.get('query', None)
 
         if query == None: return Response({"message": "Query is required."}, status.HTTP_400_BAD_REQUEST)
-        
+        print(query)
         function_status, return_details = get_top_video_details(query)
-
+        print(function_status)
         if not function_status:
             return Response({"message": return_details, "results":[]}, status.HTTP_400_BAD_REQUEST)
 
